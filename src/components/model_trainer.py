@@ -1,3 +1,6 @@
+# Model Trainer = Train with different models and find the best model and save it
+
+# Importing necessary libraries, ML models, evaluation metrics, and custom utility functions
 import os
 import sys
 from dataclasses import dataclass
@@ -19,10 +22,13 @@ from src.logger import logging
 
 from src.utils import save_object,evaluate_models
 
+
+# Defining configuration for model trainer using dataclass decorator
 @dataclass
 class ModelTrainerConfig:
     trained_model_file_path=os.path.join("artifacts","model.pkl")
 
+# ModelTrainer class to handle model training, evaluation, and saving the best model
 class ModelTrainer:
     def __init__(self):
         self.model_trainer_config=ModelTrainerConfig()
@@ -84,6 +90,7 @@ class ModelTrainer:
                 
             }
 
+            # Evaluate all the models in the models dict using the evaluate_models function
             model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,
                                              models=models,param=params)
             
@@ -91,7 +98,6 @@ class ModelTrainer:
             best_model_score = max(sorted(model_report.values()))
 
             ## To get best model name from dict
-
             best_model_name = list(model_report.keys())[
                 list(model_report.values()).index(best_model_score)
             ]
@@ -111,6 +117,6 @@ class ModelTrainer:
             r2_square = r2_score(y_test, predicted)
             return r2_square
             
-            
+        # Handling exceptions and logging errors    
         except Exception as e:
             raise CustomException(e,sys)
